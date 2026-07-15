@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.pinyinkids.R
 
-/** 统合游戏关卡 - 根据 type 自动切换交互模式 */
+/** 冒险引擎 — 每种游戏类型不同交互, 故事驱动 */
 class GamePlayFragment : Fragment() {
 
     private var levels: List<GameLevel> = emptyList()
     private var currentIndex: Int = 0
     private var score: Int = 0
+    private var stage: String = ""
 
-    // 当前关卡交互状态
-    private var selectedIds: MutableList<Int> = mutableListOf()  // 分类/规律点到
-    private var sortedIds: MutableList<Int> = mutableListOf()    // 排序拖拽
+    private var selectedIds: MutableList<Int> = mutableListOf()
+    private var sortedIds: MutableList<Int> = mutableListOf()
+    private var firstPick: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +27,7 @@ class GamePlayFragment : Fragment() {
         levels = arguments?.getSerializable("levels") as? List<GameLevel> ?: emptyList()
         currentIndex = arguments?.getInt("index") ?: 0
         score = arguments?.getInt("score") ?: 0
+        stage = arguments?.getString("stage") ?: levels.firstOrNull()?.type?.label ?: ""
     }
 
     override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, b: Bundle?): View {
@@ -43,82 +44,94 @@ class GamePlayFragment : Fragment() {
 
         val level = levels[currentIndex]
         selectedIds.clear()
-        sortedIds = level.items.map { it.id }.toMutableList()
+        firstPick = null
 
-        // type 标识
-        root.findViewById<TextView>(R.id.gameTypeLabel).text = "${level.type.icon} ${level.type.label}"
+        root.findViewById<View>(R.id.gameConfirmBtn).visibility = View.GONE
+        root.findViewById<View>(R.id.gameOptionRow).visibility = View.GONE
+
+        // 冒险风格 header
+        val type = level.type
+        root.findViewById<TextView>(R.id.gameTypeLabel).text = "${type.icon} ${type.label}"
+        root.findViewById<TextView>(R.id.gameProgress).text =
+            "第${currentIndex + 1}关 / 共${levels.size}关 ⭐$score"
+
+        // 故事 + 题目
         root.findViewById<TextView>(R.id.gameTitle).text = level.title
-        root.findViewById<TextView>(R.id.gameQuestion).text = level.question
-        root.findViewById<TextView>(R.id.gameProgress).text = "第 ${currentIndex + 1}/${levels.size} 关"
+        root.findViewById<TextView>(R.id.gameQuestion).text = "${level.story}\n\n${level.question}"
 
         val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
         container.removeAllViews()
 
-        when (level.type) {
-            GameType.PATTERN -> renderPattern(root, level)
+        when (type) {
+            GameType.PATH -> renderPath(root, level)
             GameType.CLASSIFY -> renderClassify(root, level)
-            GameType.SORTING -> renderSorting(root, level)
-            GameType.SPATIAL -> renderSpatial(root, level)
+            GameType.SHAPE -> renderShape(root, level)
+            GameType.TREASURE -> renderTreasure(root, level)
+            GameType.PATTERN -> renderPattern(root, level)
+            GameType.MAZE -> renderMaze(root, level)
+            GameType.SHOPPING -> renderShopping(root, level)
         }
     }
 
-    // ========= 找规律：点选答案 =========
-    private fun renderPattern(root: View, level: GameLevel) {
+    // ======= 小猴子过河: 按顺序点石头 =======
+    private fun renderPath(root: View, level: GameLevel) {
         val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
         val inflater = LayoutInflater.from(context)
 
-        // 显示序列(前几个显示、最后一个显示❓)
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}"
+
         for (item in level.items) {
-            val card = inflater.inflate(R.layout.item_game_card, container, false)
-            val tv = card.findViewById<TextView>(R.id.gameCardText)
-            tv.text = item.emoji
-            tv.textSize = 36f
-            container.addView(card)
-        }
-
-        // 选项
-        val optRow = root.findViewById<ViewGroup>(R.id.gameOptionRow)
-        optRow.removeAllViews()
-        optRow.visibility = View.VISIBLE
-
-        val options = level.correctOrder.take(3) + (level.options?.firstOrNull() ?: 0)
-        val optionLabels = listOf("选项 A", "选项 B", "选项 C")
-        val optionEmojis = listOf("🔴", "🔵", "🟡")
-
-        for (i in 0 until 3) {
-            val optCard = inflater.inflate(R.layout.item_game_card, optRow, false)
-            optCard.findViewById<TextView>(R.id.gameCardText).text = optionEmojis[i]
-            val label = optCard.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = optionLabels[i]
-            label.visibility = View.VISIBLE
-
-            val idx = i
-            optCard.setOnClickListener {
-                selectedIds = mutableListOf(if (idx == 0) options.last() else if (idx == 1) 2 else 1)
-                checkAnswer(root)
+            val card = inflater.inflate(R.layout.item_game_card, container, false).apply {
+                tag = item.id
             }
-            optRow.addView(optCard)
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = item.emoji
+                textSize = 40f
+            }
+            card.findViewById<TextView>(R.id.gameCardLabel).apply {
+                text = item.label
+                visibility = View.VISIBLE
+            }
+            val targetOrder = level.correctAnswer
+            card.setOnClickListener { v ->
+                val id = v.tag as Int
+                if (selectedIds.contains(id)) {
+                    selectedIds.remove(id)
+                    v.setBackgroundColor(0xFFFFFFFF.toInt())
+                } else {
+                    selectedIds.add(id)
+                    v.setBackgroundColor(0xFFA8E6CF.toInt())
+                }
+                // 自动判断: 选够了就检查
+                if (selectedIds.size == targetOrder.size) {
+                    checkAnswer(root)
+                }
+            }
+            container.addView(card)
         }
     }
 
-    // ========= 分类：点击选中 =========
+    // ======= 帮小熊整理: 分类点选+确认 =======
     private fun renderClassify(root: View, level: GameLevel) {
         val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
         val inflater = LayoutInflater.from(context)
 
-        // 提示
-        root.findViewById<TextView>(R.id.gameQuestion).text = "${level.question}\n\n(点击选中所有同类项)"
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}\n\n(点选物品, 点确认)"
 
         for (item in level.items.shuffled()) {
-            val card = inflater.inflate(R.layout.item_game_card, container, false)
-            card.tag = item.id
-            val tv = card.findViewById<TextView>(R.id.gameCardText)
-            tv.text = item.emoji
-            tv.textSize = 40f
-            val label = card.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = item.label
-            label.visibility = View.VISIBLE
-
+            val card = inflater.inflate(R.layout.item_game_card, container, false).apply {
+                tag = item.id
+            }
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = item.emoji
+                textSize = 40f
+            }
+            card.findViewById<TextView>(R.id.gameCardLabel).apply {
+                text = item.label
+                visibility = View.VISIBLE
+            }
             card.setOnClickListener { v ->
                 val id = v.tag as Int
                 if (selectedIds.contains(id)) {
@@ -132,152 +145,167 @@ class GamePlayFragment : Fragment() {
             container.addView(card)
         }
 
-        // 确认按钮
-        val confirmBtn = root.findViewById<View>(R.id.gameConfirmBtn)
-        confirmBtn.visibility = View.VISIBLE
-        confirmBtn.setOnClickListener { checkAnswer(root) }
+        root.findViewById<View>(R.id.gameConfirmBtn).apply {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                if (selectedIds.isEmpty()) {
+                    Toast.makeText(context, "点选物品再确认喔", Toast.LENGTH_SHORT).show()
+                } else {
+                    checkAnswer(root)
+                }
+            }
+        }
     }
 
-    // ========= 排序：点击交换 =========
-    private fun renderSorting(root: View, level: GameLevel) {
+    // ======= 修复机器人: 选择题 =======
+    private fun renderShape(root: View, level: GameLevel) {
         val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
         val inflater = LayoutInflater.from(context)
 
-        root.findViewById<TextView>(R.id.gameQuestion).text = "${level.question}\n\n(点击两个交换位置)"
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}"
 
-        sortedIds = level.items.map { it.id }.toMutableList()
-        val sortedItems = level.items.shuffled().toMutableList()
-        sortedIds = sortedItems.map { it.id }.toMutableList()
-
-        var firstPick: View? = null
-
-        for (item in sortedItems) {
-            val card = inflater.inflate(R.layout.item_game_card, container, false)
-            card.tag = item.id
-            val tv = card.findViewById<TextView>(R.id.gameCardText)
-            tv.text = item.emoji
-            tv.textSize = 40f
-            val label = card.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = item.label
-            label.visibility = View.VISIBLE
-
+        for (item in level.items) {
+            val card = inflater.inflate(R.layout.item_game_card, container, false).apply {
+                tag = item.id
+            }
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = item.emoji
+                textSize = 48f
+            }
+            card.findViewById<TextView>(R.id.gameCardLabel).apply {
+                text = item.label
+                visibility = View.VISIBLE
+            }
             card.setOnClickListener { v ->
-                if (firstPick == null) {
-                    firstPick = v
-                    v.setBackgroundColor(0xFFFFD93D.toInt())
-                } else {
-                    // 交换
-                    val id1 = firstPick!!.tag as Int
-                    val id2 = v.tag as Int
-                    val idx1 = sortedIds.indexOf(id1)
-                    val idx2 = sortedIds.indexOf(id2)
-                    sortedIds[idx1] = id2
-                    sortedIds[idx2] = id1
+                selectedIds = mutableListOf(v.tag as Int)
+                checkAnswer(root)
+            }
+            container.addView(card)
+        }
+    }
 
-                    firstPick!!.setBackgroundColor(0xFFFFFFFF.toInt())
-                    firstPick = null
-                    renderSortedCards(root)
-                }
+    // ======= 找宝藏: 点选所有目标 =======
+    private fun renderTreasure(root: View, level: GameLevel) {
+        renderClassify(root, level) // 复用分类交互
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}\n\n(点选所有目标, 点确认)"
+    }
+
+    // ======= 魔法森林: 找规律 =======
+    private fun renderPattern(root: View, level: GameLevel) {
+        val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
+        val inflater = LayoutInflater.from(context)
+
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}"
+
+        for (item in level.items) {
+            val card = inflater.inflate(R.layout.item_game_card, container, false)
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = item.emoji
+                textSize = 36f
             }
             container.addView(card)
         }
 
-        // 确认
-        val confirmBtn = root.findViewById<View>(R.id.gameConfirmBtn)
-        confirmBtn.visibility = View.VISIBLE
-        confirmBtn.setOnClickListener { checkAnswer(root) }
-    }
-
-    private fun renderSortedCards(root: View) {
-        val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
-        val inflater = LayoutInflater.from(context)
-        container.removeAllViews()
-
-        for (id in sortedIds) {
-            // 找 item
-            val level = levels[currentIndex]
-            val item = level.items.find { it.id == id } ?: continue
-            val card = inflater.inflate(R.layout.item_game_card, container, false)
-            card.tag = id
-            val tv = card.findViewById<TextView>(R.id.gameCardText)
-            tv.text = item.emoji
-            tv.textSize = 40f
-            val label = card.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = item.label
-            label.visibility = View.VISIBLE
-            container.addView(card)
-        }
-    }
-
-    // ========= 空间能力 =========
-    private fun renderSpatial(root: View, level: GameLevel) {
-        val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
-        val inflater = LayoutInflater.from(context)
-
-        root.findViewById<TextView>(R.id.gameQuestion).text = level.question
-
-        // 显示空间示意
-        for (item in level.items) {
-            val card = inflater.inflate(R.layout.item_game_card, container, false)
-            card.tag = item.id
-            val tv = card.findViewById<TextView>(R.id.gameCardText)
-            tv.text = item.emoji
-            tv.textSize = 48f
-            val label = card.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = item.label
-            label.visibility = View.VISIBLE
-            container.addView(card)
-        }
-
-        // 选项
         val optRow = root.findViewById<ViewGroup>(R.id.gameOptionRow)
         optRow.removeAllViews()
         optRow.visibility = View.VISIBLE
 
-        val choiceLabels = listOf("左边 / 上面", "右边 / 下面", "中间", "不确定")
-        for (i in 0 until 4) {
-            val optCard = inflater.inflate(R.layout.item_game_card, optRow, false)
-            optCard.findViewById<TextView>(R.id.gameCardText).text = choiceLabels[i].take(2)
-            optCard.findViewById<TextView>(R.id.gameCardText).textSize = 24f
-            val label = optCard.findViewById<TextView>(R.id.gameCardLabel)
-            label.text = choiceLabels[i]
-            label.visibility = View.VISIBLE
+        val correctId = level.correctAnswer.firstOrNull() ?: return
+        val correctItem = level.items.find { it.id == correctId } ?: return
+        val distractors = level.items.filter { it.id != correctId && it.emoji != "❓" }.shuffled()
+        val choices = mutableListOf(correctItem).also { it.addAll(distractors.take(2)) }.shuffled()
 
-            val idx = i
-            optCard.setOnClickListener {
-                selectedIds = mutableListOf(idx)
+        for (choice in choices) {
+            val card = inflater.inflate(R.layout.item_game_card, optRow, false)
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = choice.emoji
+                textSize = 36f
+            }
+            card.findViewById<TextView>(R.id.gameCardLabel).apply {
+                text = choice.label
+                visibility = View.VISIBLE
+            }
+            card.setOnClickListener {
+                selectedIds = mutableListOf(choice.id)
                 checkAnswer(root)
             }
-            optRow.addView(optCard)
+            optRow.addView(card)
         }
     }
 
-    // ========= 答案检查 =========
+    // ======= 太空迷宫: 方向选择 =======
+    private fun renderMaze(root: View, level: GameLevel) {
+        val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
+        val inflater = LayoutInflater.from(context)
+
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}"
+
+        for (item in level.items) {
+            val card = inflater.inflate(R.layout.item_game_card, container, false).apply {
+                tag = item.id
+            }
+            card.findViewById<TextView>(R.id.gameCardText).apply {
+                text = item.emoji
+                textSize = 40f
+            }
+            card.findViewById<TextView>(R.id.gameCardLabel).apply {
+                text = item.label
+                visibility = View.VISIBLE
+            }
+            card.setOnClickListener { v ->
+                selectedIds = mutableListOf(v.tag as Int)
+                checkAnswer(root)
+            }
+            container.addView(card)
+        }
+    }
+
+    // ======= 超市购物: 数学选择 =======
+    private fun renderShopping(root: View, level: GameLevel) {
+        renderMaze(root, level) // 复用点击选择
+        root.findViewById<TextView>(R.id.gameQuestion).text =
+            "${level.story}\n\n${level.question}"
+    }
+
+    // ======= 答案检查 =======
     private fun checkAnswer(root: View) {
         val level = levels[currentIndex]
-        val correct = level.correctOrder.toSet()
-        val userSet = selectedIds.toSet()
-
+        val correct = level.correctAnswer
         val isCorrect = when (level.type) {
-            GameType.PATTERN, GameType.SPATIAL -> userSet == correct
-            GameType.CLASSIFY -> userSet == correct
-            GameType.SORTING -> sortedIds == level.correctOrder
+            GameType.PATH, GameType.TREASURE, GameType.CLASSIFY ->
+                selectedIds.sorted() == correct.sorted()
+            GameType.SHAPE, GameType.MAZE, GameType.SHOPPING, GameType.PATTERN ->
+                selectedIds.firstOrNull() == correct.firstOrNull()
         }
 
         if (isCorrect) {
             score++
-            Toast.makeText(context, "✅ 回答正确！太棒了！", Toast.LENGTH_SHORT).show()
+            val msgs = listOf("太棒了！🌟", "答对了！🎉", "厉害！👏", "真聪明！✨", "好样的！💪")
+            Toast.makeText(context, "✅ ${msgs.random()}", Toast.LENGTH_SHORT).show()
+            root.postDelayed({ goNext(root) }, 600)
         } else {
-            Toast.makeText(context, "❌ 再想想哦～", Toast.LENGTH_SHORT).show()
+            val hint = level.hint
+            val msg = if (hint.isNotEmpty()) "再想想哦 💡 $hint" else "再想想哦 💪"
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            // 允许重试, 不自动跳转
+            selectedIds.clear()
+            firstPick = null
+            val container = root.findViewById<ViewGroup>(R.id.gameItemContainer)
+            for (i in 0 until container.childCount) {
+                container.getChildAt(i).setBackgroundColor(0xFFFFFFFF.toInt())
+            }
         }
+    }
 
-        // 下一关
-        root.postDelayed({
-            val frag = GamePlayFragment.newInstance(ArrayList(levels), currentIndex + 1, score)
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, frag)
-                .commit()
-        }, if (isCorrect) 800 else 1500)
+    private fun goNext(root: View) {
+        val frag = newInstance(ArrayList(levels), currentIndex + 1, score)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, frag)
+            .commit()
     }
 
     private fun showResult(root: View) {
@@ -286,22 +314,22 @@ class GamePlayFragment : Fragment() {
         root.findViewById<View>(R.id.gameOptionRow).visibility = View.GONE
         root.findViewById<TextView>(R.id.gameQuestion).text = ""
 
-        val tv = root.findViewById<TextView>(R.id.gameTitle)
-        tv.text = when {
-            score >= levels.size -> "🎉 全部答对！你是小天才！"
-            score >= levels.size / 2 -> "👍 答对了 $score/${levels.size} 题，继续加油！"
-            else -> "💪 答对了 $score/${levels.size} 题，多练习会更好！"
+        val type = levels.firstOrNull()?.type
+        val icon = type?.icon ?: "🎮"
+        val name = type?.label ?: "冒险"
+
+        root.findViewById<TextView>(R.id.gameTitle).text = when {
+            score >= levels.size -> icon + " 太厉害了！你完成了" + name + "的全部挑战！🏆"
+            score >= levels.size / 2 -> icon + " " + name + "挑战完成！" + score.toString() + "/" + levels.size + "关通过 👍"
+            else -> icon + " " + name + "冒险结束！" + score.toString() + "/" + levels.size + "关通过，再试一次吧 💪"
         }
+        root.findViewById<TextView>(R.id.gameTypeLabel).text = "✨ 冒险完成"
+        root.findViewById<TextView>(R.id.gameProgress).text = "⭐ 得分: $score/${levels.size}"
 
-        root.findViewById<TextView>(R.id.gameTypeLabel).text = "✨ 游戏结束"
-        root.findViewById<TextView>(R.id.gameProgress).text = "最终得分: $score/${levels.size}"
-
-        val retryBtn = root.findViewById<View>(R.id.gameConfirmBtn).also {
+        root.findViewById<View>(R.id.gameConfirmBtn).also {
             it.visibility = View.VISIBLE
-            (it as? TextView)?.text = "返回游戏大厅"
-        }
-        retryBtn.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            (it as? TextView)?.text = "🔙 返回冒险大厅"
+            it.setOnClickListener { parentFragmentManager.popBackStack() }
         }
     }
 
