@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PinyinKids" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#FF5B9F</item>
+        <item name="colorPrimaryVariant">#D94D87</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#56C596</item>
+        <item name="colorSecondaryVariant">#3DAF7D</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#1A1A2E</item>
+        <item name="android:navigationBarColor">#1A1A2E</item>
+    </style>
+</resources>

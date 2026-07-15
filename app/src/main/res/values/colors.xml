@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Category colors -->
+    <color name="shengmu">#FF5B9F</color>
+    <color name="yunmu">#56C596</color>
+    <color name="zhengti">#FFA94D</color>
+
+    <!-- UI colors -->
+    <color name="background">#FFF8F0</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="text_primary">#2D2D2D</color>
+    <color name="text_secondary">#666666</color>
+    <color name="hint_text">#999999</color>
+    <color name="progress_track">#E0E0E0</color>
+</resources>

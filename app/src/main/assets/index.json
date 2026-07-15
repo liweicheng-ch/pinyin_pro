@@ -1,0 +1,380 @@
+[
+  {
+    "pinyin": "b",
+    "char": "玻",
+    "mp3": "b.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "p",
+    "char": "坡",
+    "mp3": "p.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "m",
+    "char": "摸",
+    "mp3": "m.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "f",
+    "char": "佛",
+    "mp3": "f.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "d",
+    "char": "得",
+    "mp3": "d.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "t",
+    "char": "特",
+    "mp3": "t.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "n",
+    "char": "讷",
+    "mp3": "n.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "l",
+    "char": "勒",
+    "mp3": "l.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "g",
+    "char": "歌",
+    "mp3": "g.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "k",
+    "char": "科",
+    "mp3": "k.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "h",
+    "char": "喝",
+    "mp3": "h.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "j",
+    "char": "基",
+    "mp3": "j.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "q",
+    "char": "欺",
+    "mp3": "q.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "x",
+    "char": "希",
+    "mp3": "x.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "zh",
+    "char": "知",
+    "mp3": "zh.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "ch",
+    "char": "蚩",
+    "mp3": "ch.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "sh",
+    "char": "思",
+    "mp3": "sh.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "r",
+    "char": "日",
+    "mp3": "r.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "z",
+    "char": "资",
+    "mp3": "z.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "c",
+    "char": "雌",
+    "mp3": "c.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "s",
+    "char": "思",
+    "mp3": "s.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "y",
+    "char": "衣",
+    "mp3": "y.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "w",
+    "char": "乌",
+    "mp3": "w.mp3",
+    "type": "声母"
+  },
+  {
+    "pinyin": "a",
+    "char": "啊",
+    "mp3": "a.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "o",
+    "char": "喔",
+    "mp3": "o.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "e",
+    "char": "鹅",
+    "mp3": "e.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "i",
+    "char": "衣",
+    "mp3": "i.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "u",
+    "char": "乌",
+    "mp3": "u.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "v",
+    "char": "迂",
+    "mp3": "v.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ai",
+    "char": "哀",
+    "mp3": "ai.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ei",
+    "char": "诶",
+    "mp3": "ei.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ui",
+    "char": "威",
+    "mp3": "ui.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ao",
+    "char": "熬",
+    "mp3": "ao.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ou",
+    "char": "欧",
+    "mp3": "ou.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "iu",
+    "char": "优",
+    "mp3": "iu.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ie",
+    "char": "耶",
+    "mp3": "ie.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ve",
+    "char": "约",
+    "mp3": "ve.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "er",
+    "char": "耳",
+    "mp3": "er.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "an",
+    "char": "安",
+    "mp3": "an.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "en",
+    "char": "恩",
+    "mp3": "en.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "in",
+    "char": "因",
+    "mp3": "in.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "un",
+    "char": "温",
+    "mp3": "un.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "vn",
+    "char": "晕",
+    "mp3": "vn.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ang",
+    "char": "昂",
+    "mp3": "ang.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "eng",
+    "char": "享",
+    "mp3": "eng.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ing",
+    "char": "英",
+    "mp3": "ing.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "ong",
+    "char": "翁",
+    "mp3": "ong.mp3",
+    "type": "韵母"
+  },
+  {
+    "pinyin": "zhi",
+    "char": "织",
+    "mp3": "zhi1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "chi",
+    "char": "吃",
+    "mp3": "chi1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "shi",
+    "char": "狮",
+    "mp3": "shi1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "ri",
+    "char": "日",
+    "mp3": "ri1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "zi",
+    "char": "资",
+    "mp3": "zi1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "ci",
+    "char": "刺",
+    "mp3": "ci1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "si",
+    "char": "丝",
+    "mp3": "si1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yi",
+    "char": "衣",
+    "mp3": "yi1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "wu",
+    "char": "屋",
+    "mp3": "wu1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yu",
+    "char": "雨",
+    "mp3": "yu1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "ye",
+    "char": "椰",
+    "mp3": "ye1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yue",
+    "char": "月",
+    "mp3": "yue1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yuan",
+    "char": "圆",
+    "mp3": "yuan1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yin",
+    "char": "印",
+    "mp3": "yin1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "yun",
+    "char": "云",
+    "mp3": "yun1.mp3",
+    "type": "整体认读音节"
+  },
+  {
+    "pinyin": "ying",
+    "char": "鹰",
+    "mp3": "ying1.mp3",
+    "type": "整体认读音节"
+  }
+]
