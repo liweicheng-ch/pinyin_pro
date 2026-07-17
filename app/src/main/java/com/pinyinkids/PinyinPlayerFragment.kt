@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 
@@ -30,7 +31,7 @@ class PinyinPlayerFragment : Fragment() {
 
         // Back
         root.findViewById<TextView>(R.id.backButton).setOnClickListener {
-            (activity as? MainActivity)?.showCategory()
+            parentFragmentManager.popBackStack()
         }
 
         // Title
@@ -71,6 +72,17 @@ class PinyinPlayerFragment : Fragment() {
         root.post { adapter?.play(0) }
 
         return root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adapter?.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val pos = viewPager?.currentItem ?: 0
+        adapter?.resume(pos)
     }
 
     override fun onDestroy() {

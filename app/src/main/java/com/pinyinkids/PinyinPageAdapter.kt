@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class PinyinPageAdapter(
@@ -14,6 +15,7 @@ class PinyinPageAdapter(
 ) : RecyclerView.Adapter<PinyinPageAdapter.PageViewHolder>() {
 
     private var currentPlayer: MediaPlayer? = null
+    private var lastPlayedPosition: Int = -1
 
     inner class PageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val pinyinText: TextView = itemView.findViewById(R.id.pinyinText)
@@ -44,6 +46,7 @@ class PinyinPageAdapter(
     fun play(position: Int) {
         if (position < 0 || position >= entries.size) return
         val entry = entries[position]
+        lastPlayedPosition = position
 
         try {
             currentPlayer?.release()
@@ -56,7 +59,27 @@ class PinyinPageAdapter(
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Toast.makeText(context, "音频加载失败: ${entry.mp3}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun pause() {
+        currentPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+            }
+        }
+    }
+
+    fun resume(position: Int) {
+        currentPlayer?.let {
+            if (!it.isPlaying && lastPlayedPosition == position) {
+                it.start()
+            } else {
+                // Player was released or switched page, replay
+                play(position)
+            }
+        } ?: play(position)
     }
 
     fun release() {

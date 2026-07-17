@@ -55,7 +55,7 @@
                 android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnPattern"
+                    android:id="@+id/btnPath"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1"
@@ -125,7 +125,7 @@
                 android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnSorting"
+                    android:id="@+id/btnShape"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1"
@@ -156,7 +156,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnSpatial"
+                    android:id="@+id/btnTreasure"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1"
@@ -195,7 +195,7 @@
                 android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnExtra1"
+                    android:id="@+id/btnPattern"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1"
@@ -226,7 +226,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnExtra2"
+                    android:id="@+id/btnMaze"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1"
@@ -266,7 +266,7 @@
                 android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnExtra3"
+                    android:id="@+id/btnShopping"
                     android:layout_width="0dp"
                     android:layout_height="130dp"
                     android:layout_weight="1.2"
@@ -296,7 +296,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 占位保持对称 -->
                 <Space
                     android:layout_width="0dp"
                     android:layout_height="130dp"

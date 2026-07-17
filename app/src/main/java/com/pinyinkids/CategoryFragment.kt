@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
+import androidx.core.content.ContextCompat
 import com.pinyinkids.game.GameMenuFragment
 
 class CategoryFragment : Fragment() {
@@ -42,7 +43,9 @@ class CategoryFragment : Fragment() {
         gameCard.findViewById<TextView>(R.id.categoryIcon).text = "🧩"
         gameCard.findViewById<TextView>(R.id.categoryName).text = "思维小游戏"
         gameCard.findViewById<TextView>(R.id.categoryCount).text = "找规律·分类·排序·空间"
-        gameCard.findViewById<MaterialCardView>(R.id.categoryCard).setCardBackgroundColor(0xFF6C5CE7.toInt())
+        gameCard.findViewById<MaterialCardView>(R.id.categoryCard).setCardBackgroundColor(
+            ContextCompat.getColor(requireContext(), R.color.game_card_purple)
+        )
         gameCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, GameMenuFragment.newInstance())
